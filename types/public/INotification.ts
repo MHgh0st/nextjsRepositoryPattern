@@ -7,5 +7,5 @@ export default interface INotification {
   duration: number;
   type: NotificationType;
   position: string;
-  created: Date;
+  created: number;
 }

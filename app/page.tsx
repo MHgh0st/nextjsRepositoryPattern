@@ -11,17 +11,22 @@ const Page = () => {
     const result = await repository.company.Get(56);
     setData(result);
   };
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
   return (
     <RootLayout>
       <>
         <Loading>
           <Notification></Notification>
-          <div>
-            <div>id: {data?.data.id}</div>
-            <div>title: {data?.data.title}</div>
+          <div className={"w-full flex justify-center"}>
+            <div>
+              <div>id: {data?.data.id}</div>
+              <div>title: {data?.data.title}</div>
+            </div>
+            <button className={"py-1 px-3 border rounded"} onClick={fetchData}>
+              fetch
+            </button>
           </div>
         </Loading>
       </>

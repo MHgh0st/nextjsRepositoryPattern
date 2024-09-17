@@ -1,19 +1,13 @@
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import INotification from "@/types/public/INotification";
-import { setVisibility } from "@/state/slices/notificationSlice";
-import { AppDispatch, RootState } from "@/state/store";
+import { deleteNotification } from "@/state/slices/notificationSlice";
+import { RootState, store } from "@/state/store";
 import { NotificationType } from "@/utils/data/NotificationType";
 const Notification = () => {
-  const notification: INotification = useSelector(
-    (state: RootState): INotification => state.notification,
+  const notifications: INotification[] = useSelector(
+    (state: RootState): INotification[] => state.notification,
   );
-
-  const dispatch: AppDispatch = useDispatch();
-
-  setTimeout(() => {
-    closeNotification();
-  }, notification.duration);
-
+  console.log("length: ", notifications.length);
   const getPosition = (position: string) => {
     switch (position) {
       case "top":
@@ -24,14 +18,22 @@ const Notification = () => {
         return "top-0";
     }
   };
-  const closeNotification = () => {
-    dispatch(setVisibility(false));
+  const closeNotification = (id: string) => {
+    store.dispatch(deleteNotification(id));
   };
-
+  setInterval(() => {
+    notifications.map((item: INotification) => {
+      const now = new Date().valueOf();
+      const itemRemainingTime = item.created + item.duration;
+      if (now > itemRemainingTime) {
+        closeNotification(item.id);
+      }
+    });
+  }, 1);
   return (
     <>
-      {notification.visibility && (
-        <div className="absolute top-0  w-full">
+      {notifications.map((notification, index) => (
+        <div className={"absolute top-0"} key={index}>
           <div className={getPosition(notification.position)}>
             {notification.type === NotificationType.Success && (
               <div
@@ -61,7 +63,7 @@ const Notification = () => {
                     type="button"
                     className="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700"
                     aria-label="Close"
-                    onClick={() => closeNotification()}
+                    onClick={() => closeNotification(notification.id)}
                   >
                     <span className="sr-only">Close</span>
                     <svg
@@ -114,7 +116,7 @@ const Notification = () => {
                     type="button"
                     className="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700"
                     aria-label="Close"
-                    onClick={() => closeNotification()}
+                    onClick={() => closeNotification(notification.id)}
                   >
                     <span className="sr-only">Close</span>
                     <svg
@@ -166,7 +168,7 @@ const Notification = () => {
                   type="button"
                   className="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700"
                   aria-label="Close"
-                  onClick={() => closeNotification()}
+                  onClick={() => closeNotification(notification.id)}
                 >
                   <span className="sr-only">Close</span>
                   <svg
@@ -192,7 +194,7 @@ const Notification = () => {
             )}
           </div>
         </div>
-      )}
+      ))}
     </>
   );
 };

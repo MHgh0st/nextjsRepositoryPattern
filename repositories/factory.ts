@@ -2,7 +2,7 @@ import { transform, transformPaginated } from "@/repositories/response";
 import { store } from "@/state/store";
 import INotification from "@/types/public/INotification";
 import { NotificationType } from "@/utils/data/NotificationType";
-import { assign } from "@/state/slices/notificationSlice";
+import { pushNotification } from "@/state/slices/notificationSlice";
 import { setLoading } from "@/components/loading";
 import { QueryClient } from "@tanstack/react-query";
 
@@ -92,9 +92,9 @@ class FetchFactory {
       duration: 2000,
       type: NotificationType.Error,
       position: "top",
-      created: new Date(),
+      created: new Date().valueOf(),
     };
-    store.dispatch(assign(item));
+    store.dispatch(pushNotification(item));
   }
   notifySuccess(message: string) {
     const item: INotification = {
@@ -104,9 +104,9 @@ class FetchFactory {
       duration: 2000,
       type: NotificationType.Success,
       position: "top",
-      created: new Date(),
+      created: new Date().valueOf(),
     };
-    store.dispatch(assign(item));
+    store.dispatch(pushNotification(item));
   }
 }
 export default FetchFactory;
